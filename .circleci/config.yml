@@ -8,9 +8,8 @@ jobs:
     steps:
       - checkout
       - run: echo "==== RUN ===="
-      - run: pwd
-      - run: ls -la
-      - run: sh run-danger.sh
+      - run: echo $ENV_CIRCLE_CI_TEST
+      # - run: sh run-danger.sh
       - run: echo "==== END ===="
 
 workflows:
