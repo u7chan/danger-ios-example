@@ -1,0 +1,20 @@
+version: 2.1
+
+jobs:
+  danger:
+    docker:
+      - image: jkkitakita/circleci-danger # https://github.com/jkkitakita/circleci-danger
+    resource_class: small
+    steps:
+      - checkout
+      - run: echo "==== RUN ===="
+      - run: pwd
+      - run: ls -la
+      - run: sh run-danger.sh
+      - run: echo "==== END ===="
+
+workflows:
+  version: 2.1
+  danger:
+    jobs:
+      - danger
