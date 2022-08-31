@@ -7,8 +7,6 @@ jobs:
     resource_class: small
     steps:
       - checkout
-      # - run: sh run-danger.sh $ENV_GITHUB_API_TOKEN $ENV_GITHUB_PULL_REQUEST_URL
-      - run: export DANGER_GITHUB_API_TOKEN=$ENV_GITHUB_API_TOKEN
       - run: bundle exec danger --fail-on-errors=true
 
 workflows:
