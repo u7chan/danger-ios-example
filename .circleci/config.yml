@@ -7,10 +7,7 @@ jobs:
     resource_class: small
     steps:
       - checkout
-      - run: echo "==== RUN ===="
-      - run: echo $ENV_CIRCLE_CI_TEST
-      # - run: sh run-danger.sh
-      - run: echo "==== END ===="
+      - run: sh run-danger.sh $ENV_GITHUB_API_TOKEN $ENV_GITHUB_PULL_REQUEST_URL
 
 workflows:
   version: 2.1
