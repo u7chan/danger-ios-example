@@ -27,15 +27,20 @@ jobs:
       - run: curl -Ls -o mint.zip https://github.com/yonaskolb/Mint/releases/download/${MINT_VERSION}/mint.zip
       - run: unzip mint.zip; rm mint.zip
       - run: mv mint /usr/local/bin/
-      - *save_mint
       - run: mint version
+      - *save_mint
+
   build:
     executor: ios-executor
     steps:
       - *restore_mint
-      - run: mint version
-      #- checkout
-      #- run: bundle install
+      - checkout
+      - run: mint bootstrap
+      - run: mint list
+      - run: mint which SwiftLint
+      - run: ./scripts/run-lint.sh
+      - run: cat swiftlint.result.xml
+      # - run: bundle install
       #- run: bundle exec danger --fail-on-errors=true
 
 workflows:
