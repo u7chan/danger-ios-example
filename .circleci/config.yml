@@ -1,16 +1,31 @@
 version: 2.1
 
+executors:
+  ios-executor:
+    macos:
+      xcode: 13.4.1
+
 jobs:
-  danger:
-    docker:
-      - image: jkkitakita/circleci-danger # https://github.com/jkkitakita/circleci-danger
-    resource_class: small
+  setup-mint:
+    executor: ios-executor
+    step:
+      - run: version=$(curl -s "https://github.com/yonaskolb/Mint/releases/latest" | sed 's/^.*tag\/\([^"]*\).*$/\1/')
+      - run: curl -Ls -o mint.zip https://github.com/yonaskolb/Mint/releases/download/${version}/mint.zip
+      - run: unzip mint.zip
+      - run: mv mint /usr/local/bin/
+  build:
+    executor: ios-executor
     steps:
-      - checkout
-      - run: bundle exec danger --fail-on-errors=true
+      - run: mint version
+      #- checkout
+      #- run: bundle install
+      #- run: bundle exec danger --fail-on-errors=true
 
 workflows:
-  version: 2.1
-  danger:
+  version: 2
+  pullrequest:
     jobs:
-      - danger
+      - setup-mint
+      - build:
+        requires:
+          - setup-mint
