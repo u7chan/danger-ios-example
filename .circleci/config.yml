@@ -7,17 +7,26 @@ executors:
     resource_class: medium
 
 references:
-  cache_key: &cache_key mint-cache
+  cache_key_mint: &cache_key_mint mint-cache-${MINT_VERSION}
   save_mint: &save_mint
     save_cache:
-      key: *cache_key
+      key: *cache_key_mint
       paths:
         - /usr/local/bin/mint
   restore_mint: &restore_mint
     restore_cache:
       keys:
-        - *cache_key
-
+        - *cache_key_mint
+  cache_mint_packages: &cache_mint_packages mint-packages-cache-{{ checksum "Mintfile" }}
+  save_mint_packages: &save_mint_packages
+    save_cache:
+      key: *cache_mint_packages
+      paths:
+        - /Users/distiller/.mint/packages
+  restore_mint_packages: &restore_mint_packages
+    restore_cache:
+      keys:
+        - *cache_mint_packages
 jobs:
   setup-mint:
     executor: ios-executor
@@ -35,9 +44,9 @@ jobs:
     steps:
       - *restore_mint
       - checkout
+      - *restore_mint_packages
       - run: mint bootstrap
-      - run: mint list
-      - run: mint which SwiftLint
+      - *save_mint_packages
       - run: ./scripts/run-lint.sh
       - run: cat swiftlint.result.xml
       # - run: bundle install
