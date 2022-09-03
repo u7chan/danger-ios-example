@@ -6,6 +6,19 @@ executors:
       xcode: 13.4.1
     resource_class: medium
 
+references:
+  cache_key: &cache_key mint-cache
+  save_mint: &save_mint
+    save_cache:
+      paths:
+        - /usr/local/bin/mint
+      keys:
+        - *cache_key
+  restore_mint: &restore_mint
+    restore_cache:
+      keys:
+        - *cache_key
+
 jobs:
   setup-mint:
     executor: ios-executor
@@ -15,9 +28,12 @@ jobs:
       - run: curl -Ls -o mint.zip https://github.com/yonaskolb/Mint/releases/download/${MINT_VERSION}/mint.zip
       - run: unzip mint.zip; rm mint.zip
       - run: mv mint /usr/local/bin/
+      - *save_mint
+      - run: mint version
   build:
     executor: ios-executor
     steps:
+      - *restore_mint
       - run: mint version
       #- checkout
       #- run: bundle install
