@@ -10,10 +10,9 @@ references:
   cache_key: &cache_key mint-cache
   save_mint: &save_mint
     save_cache:
+      key: *cache_key
       paths:
         - /usr/local/bin/mint
-      keys:
-        - *cache_key
   restore_mint: &restore_mint
     restore_cache:
       keys:
