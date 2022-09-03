@@ -8,7 +8,7 @@ executors:
 jobs:
   setup-mint:
     executor: ios-executor
-    step:
+    steps:
       - run: version=$(curl -s "https://github.com/yonaskolb/Mint/releases/latest" | sed 's/^.*tag\/\([^"]*\).*$/\1/')
       - run: curl -Ls -o mint.zip https://github.com/yonaskolb/Mint/releases/download/${version}/mint.zip
       - run: unzip mint.zip
@@ -27,5 +27,5 @@ workflows:
     jobs:
       - setup-mint
       - build:
-        requires:
-          - setup-mint
+          requires:
+            - setup-mint
