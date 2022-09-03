@@ -42,14 +42,16 @@ jobs:
   build:
     executor: ios-executor
     steps:
-      - *restore_mint
       - checkout
+      - *restore_mint
       - *restore_mint_packages
       - run: mint bootstrap
       - *save_mint_packages
       - run: ./scripts/run-lint.sh
-      - run: cat swiftlint.result.xml
-      # - run: bundle install
+      - run: cat swiftlint.result.xml # DEBUG
+      - run: bundle install
+      - run: which bundle exec danger
+      - run: bundle exec danger --version
       #- run: bundle exec danger --fail-on-errors=true
 
 workflows:
