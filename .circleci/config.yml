@@ -48,7 +48,6 @@ jobs:
       - run: mint bootstrap
       - *save_mint_packages
       - run: ./scripts/run-lint.sh
-      - run: cat swiftlint.result.xml # DEBUG
       - run: bundle install
       - run: bundle exec danger --version
       - run: bundle exec danger --fail-on-errors=true
