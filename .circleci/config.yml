@@ -1,0 +1,62 @@
+version: 2.1
+
+executors:
+  ios-executor:
+    macos:
+      xcode: 13.4.1
+    resource_class: medium
+
+references:
+  cache_key_mint: &cache_key_mint mint-cache-${MINT_VERSION}
+  save_mint: &save_mint
+    save_cache:
+      key: *cache_key_mint
+      paths:
+        - /usr/local/bin/mint
+  restore_mint: &restore_mint
+    restore_cache:
+      keys:
+        - *cache_key_mint
+  cache_mint_packages: &cache_mint_packages mint-packages-cache-{{ checksum "Mintfile" }}
+  save_mint_packages: &save_mint_packages
+    save_cache:
+      key: *cache_mint_packages
+      paths:
+        - /Users/distiller/.mint/packages
+  restore_mint_packages: &restore_mint_packages
+    restore_cache:
+      keys:
+        - *cache_mint_packages
+jobs:
+  setup-mint:
+    executor: ios-executor
+    environment:
+      MINT_VERSION: 0.17.0
+    steps:
+      - run: curl -Ls -o mint.zip https://github.com/yonaskolb/Mint/releases/download/${MINT_VERSION}/mint.zip
+      - run: unzip mint.zip; rm mint.zip
+      - run: mv mint /usr/local/bin/
+      - run: mint version
+      - *save_mint
+
+  build:
+    executor: ios-executor
+    steps:
+      - checkout
+      - *restore_mint
+      - *restore_mint_packages
+      - run: mint bootstrap
+      - *save_mint_packages
+      - run: ./scripts/run-lint.sh
+      - run: bundle install
+      - run: bundle exec danger --version
+      - run: bundle exec danger --fail-on-errors=true
+
+workflows:
+  version: 2
+  pullrequest:
+    jobs:
+      - setup-mint
+      - build:
+          requires:
+            - setup-mint

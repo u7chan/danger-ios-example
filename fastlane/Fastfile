@@ -23,4 +23,15 @@ platform :ios do
       devices: ["iPhone 13"]
     )
   end
+
+  lane :run_danger do
+    danger(
+      danger_id: "unit-tests",
+      dangerfile: "./Dangerfile",
+      github_api_token: ENV["GITHUB_API_TOKEN"],
+      pr: ENV["GITHUB_PULL_REQUEST_URL"],
+      verbose: true,
+      fail_on_errors: true
+    )
+  end
 end
